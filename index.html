@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signature Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      h1,
+      h2,
+      a,
+      p,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: Arial, Helvetica, sans-serif !important;
+      }
+     
+      .choosecolor {
+        align-items: center;
+        justify-content: space-between;
+        gap: 50px;
+      }
+      .choosecolor button {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        transform: scale(0.6);
+      }
+
+      .active {
+        border: 3px solid #7de9f7fe; /* Add a thicker border to the active color button */
+        transform: scale(1.1); /* Slightly enlarge the active button */
+      }
+
+      .mybtn1 {
+        border: 2px solid #49a3af;
+        background: transparent !important;
+        color: #49a3af !important;
+        font-weight: 500;
+        padding: 10px 60px !important;
+        border-radius: 50px;
+      }
+      .mybtn2 {
+        background: #49a3af !important;
+        color: white !important;
+        font-weight: 500;
+        padding: 10px 60px !important;
+        border-radius: 50px;
+      }
+      .maintt {
+        margin-top: 50px;
+        padding: 50px;
+        padding-bottom: 50px;
+        width: 80%;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        border-radius: 10px;
+      }
+
+      @media (max-width: 500px) {
+        .maintt {
+          margin-top: 50px;
+          padding: 8px;
+          padding-bottom: 50px;
+          width: 95%;
+          box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+          border-radius: 10px;
+        }
+
+        .mybtn2,
+        .mybtn1 {
+          zoom: 0.8;
+        }
+        .dmnbtns {
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 20px;
+        }
+        .dmnbtns button:nth-child(3) {
+          margin-top: 0px;
+        }
+        .separator{
+            display: none;
+        }
+
+        .canvaboxes{
+            width: 100%;
+            flex-flow: column;
+            gap: 30px;
+        }
+       
+      }
+
+      /* Custom Styles */
+      .canvas-frame {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      .hidden {
+        display: none;
+      }
+      .loader {
+        border: 8px solid #f3f3f3; /* Light grey */
+        border-top: 8px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .rbgsection{
+        width: 50%;
+      }
+
+
+    </style>
+  </head>
+  <body
+    class="flex flex-col items-center justify-center min-h-screen bg-gray-20"
+  >
+    <nav
+      class="bg-[#49a3af] :bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 :border-gray-600"
+    >
+      <div
+        class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"
+      >
+        <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+          <span
+            class="self-center text-3xl font-semibold whitespace-nowrap text-white"
+            style="font-weight: bold"
+            >VEx</span
+          >
+        </a>
+        <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+          <button
+            style="background: transparent !important"
+            type="button"
+            class="text-white bg-black border border-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-3 text-center"
+          >
+            <a href="#start"> Get started </a>
+          </button>
+          <button
+            data-collapse-toggle="navbar-sticky"
+            type="button"
+            class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden focus:outline-none focus:ring-2 focus:ring-gray-200 :text-gray-400 :hover:bg-gray-700 :focus:ring-gray-600"
+            aria-controls="navbar-sticky"
+            aria-expanded="false"
+          >
+            <span class="sr-only">Open main menu</span>
+            <svg
+              class="w-5 h-5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 17 14"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M1 1h15M1 7h15M1 13h15"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <div
+          class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
+          id="navbar-sticky"
+        >
+          <ul
+            class="flex flex-col p-4 md:p-0 mt-4 font-medium rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 :bg-gray-800 md: :bg-gray-900 :border-gray-700"
+          >
+            <li>
+              <a
+                aria-current="page"
+                class="block py-2 px-3 text-white rounded md:bg-transparent md:text-white md:p-0 md: :text-blue-500"
+                href="/"
+                >Home</a
+              >
+            </li>
+            <li>
+              <a
+                class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md: :hover:text-blue-500 :text-white :hover:bg-gray-700 :hover:text-white md: :hover:bg-transparent :border-gray-700"
+                href="#about"
+                >About</a
+              >
+            </li>
+
+            <li>
+              <a
+                class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md: :hover:text-blue-500 :text-white :hover:bg-gray-700 :hover:text-white md: :hover:bg-transparent :border-gray-700"
+                href="#contact"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="relative isolate px-6 lg:px-8">
+      <div
+        class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+        aria-hidden="true"
+      ></div>
+      <div class="mx-auto pt-24 max-w-2xl">
+        <div class="hidden sm:mb-8 sm:flex sm:justify-center">
+          <div
+            class="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+          >
+            Announcing our next round of funding.
+            <a href="#" class="font-semibold text-[#49a3af]"
+              ><span class="absolute inset-0" aria-hidden="true"></span>Read
+              more <span aria-hidden="true">→</span></a
+            >
+          </div>
+        </div>
+        <div class="text-center">
+          <h1
+            class="text-3xl font-bold tracking-tight text-[#49a3af] sm:text-4xl"
+          >
+            Remove Image Backgrounds Effortlessly
+          </h1>
+          <p class="mt-6 text-l leading-8 text-gray-600">
+            Easily remove backgrounds from images with our user-friendly Background Removal Tool, perfect for enhancing visuals for marketing and design projects.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mx-auto p-6 bg-white rounded-lg shadow-lg">
+         <div class="mb-4 flex justify-center gap-6 flex-wrap">
+            <input type="file" id="upload" class="hidden" accept="image/*">
+            <label for="upload" class="inline-block px-4 py-2 bg-blue-600 text-white cursor-pointer mybtn1">Choose Image</label>
+            <button id="remove-bg-btn" class="mybtn2">Remove BG</button>
+        </div>
+
+        <div class="flex justify-between mb-4 mt-10 canvaboxes">
+            <div class="flex-1 mr-2">
+                <div class="text-center mb-2">Original Image</div>
+                <canvas id="original-canvas" class="canvas-frame w-full"></canvas>
+            </div>
+            <div class="separator w-1 bg-gray-300 mx-4"></div>
+            <div class="flex-1 ml-2">
+                <div class="text-center mb-2">Processed Image</div>
+                <div class="relative">
+                    <canvas id="canvas" class="canvas-frame w-full"></canvas>
+                    <div id="preloader" class="loader hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="icon-container" class="flex justify-center hidden gap-3">
+            <button id="save-icon" class="mx-2 px-4 py-2 bg-blue-600 text-white rounded" style="display: none;">💾 Save</button>
+            <button id="download-icon" class="mybtn2">Download</button>
+            <button id="clear-icon" class="mybtn1">Clear</button>
+        </div>
+    </div>
+
+    <section
+      id="about"
+      class="w-full pt-8 lg:pt-32 bg-[url('https://pagedone.io/asset/uploads/1691055810.png')] bg-center bg-cover"
+    >
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative text-center">
+        <h1
+          class="max-w-2xl mx-auto text-center font-manrope font-bold text-4xl text-gray-900 mb-5 md:text-5xl leading-[50px]"
+        >
+        Effortless Background Removal Tool: Transform Your 
+          <span class="text-[#49a3af]">Images Instantly</span>
+        </h1>
+        <p
+          class="text-center text-base font-normal leading-7 text-gray-500 mb-9 w-[90%]"
+          style="margin-inline: auto"
+        >
+        Effortlessly remove backgrounds from images with our AI-powered Background Removal Tool, ensuring professional-quality results in seconds. Ideal for businesses, photographers, and content creators seeking clean, polished visuals.
+
+
+
+
+
+
+
+        </p>
+        <a
+          href="#start"
+          class="w-full md:w-auto mb-14 inline-flex items-center justify-center py-3 px-7 text-base font-semibold text-center text-white rounded-full bg-[#49a3af] shadow-xs hover:bg-indigo-700 transition-all duration-500"
+        >
+          Read More
+          <svg
+            class="ml-2"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7.5 15L11.0858 11.4142C11.7525 10.7475 12.0858 10.4142 12.0858 10C12.0858 9.58579 11.7525 9.25245 11.0858 8.58579L7.5 5"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+        <div class="flex justify-center">
+          <img
+            src="https://imgv3.fotor.com/images/blog-richtext-image/remove-a-curly-hair-girl-blue-bg-in-fotor.png.jpg"
+            alt="Dashboard image"
+          />
+        </div>
+      </div>
+    </section>
+
+    <div class="maintt" id="start">
+        <p class="text-lg text-gray-600 mb-4">
+            In the age of digital media, the ability to edit and manipulate images has become a crucial skill for businesses, marketers, and content creators. Whether it’s for social media posts, marketing materials, or personal projects, having a clean and professional image is essential. One of the most common editing tasks is removing backgrounds from images, and the <span class="font-semibold">Background Removal Tool</span> is designed to simplify this process. This powerful tool allows users to efficiently isolate subjects from their backgrounds, ensuring stunning results with minimal effort.
+        </p>
+        
+        <p class="text-lg text-gray-600 mb-4">
+            This article explores the features, benefits, and applications of the Background Removal Tool, highlighting why it is an essential resource for anyone involved in image editing.
+        </p>
+        
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">
+            What is the Background Removal Tool?
+        </h2>
+        <p class="text-lg text-gray-600 mb-4">
+            The <span class="font-semibold">Background Removal Tool</span> is an advanced software solution that enables users to remove backgrounds from images quickly and accurately. This tool employs sophisticated algorithms and artificial intelligence to identify and separate subjects from their backgrounds, making it ideal for a variety of applications. Whether you’re a photographer looking to enhance your portfolio, a business owner needing clean product images, or a content creator wanting to elevate your visuals, this tool is tailored to meet your needs.
+        </p>
+        
+        <p class="text-lg text-gray-600 mb-4">
+            The software is user-friendly and designed to cater to both novice and experienced users, making it accessible to anyone looking to improve their image editing workflow. With just a few clicks, users can achieve professional-quality results without the steep learning curve typically associated with image editing software.
+        </p>
+        
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">
+            Why Background Removal Matters
+        </h2>
+        <p class="text-lg text-gray-600 mb-4">
+            Before diving into the features of the Background Removal Tool, it’s important to understand why background removal is crucial. A well-executed background removal enhances the focus on the subject, making images more visually appealing and professional. It provides:
+        </p>
+        
+        <ul class="list-disc list-inside text-lg text-gray-600 mb-6">
+            <li>
+                <strong>Improved Visual Appeal:</strong> Clean images with transparent or solid backgrounds draw attention to the subject and enhance the overall aesthetic.
+            </li>
+            <li>
+                <strong>Brand Consistency:</strong> Businesses can maintain a consistent look across their marketing materials by using images with uniform backgrounds.
+            </li>
+            <li>
+                <strong>Enhanced Marketing:</strong> High-quality product images can significantly increase conversion rates in e-commerce and advertising campaigns.
+            </li>
+            <li>
+                <strong>Versatility:</strong> Edited images can be easily integrated into various media formats, including websites, social media, and print materials.
+            </li>
+        </ul>
+        
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">
+            Key Features of the Background Removal Tool
+        </h2>
+        
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+            Advanced AI Technology
+        </h3>
+        <p class="text-lg text-gray-600 mb-4">
+            One of the standout features of the Background Removal Tool is its advanced AI technology, which intelligently detects and isolates subjects from their backgrounds. This ensures high accuracy in the removal process, even for complex images with intricate details.
+        </p>
+        
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+            User-Friendly Interface
+        </h3>
+        <p class="text-lg text-gray-600 mb-4">
+            The tool is designed with a simple and intuitive interface, allowing users to easily navigate through the features without any prior editing experience. The drag-and-drop functionality makes uploading images seamless and hassle-free.
+        </p>
+        
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+            Batch Processing Capabilities
+        </h3>
+        <p class="text-lg text-gray-600 mb-4">
+            For businesses that require processing large volumes of images, the Background Removal Tool offers batch processing capabilities. Users can upload multiple images and have them processed simultaneously, significantly saving time and effort.
+        </p>
+        
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+            Customizable Output Options
+        </h3>
+        <p class="text-lg text-gray-600 mb-4">
+            Users have the flexibility to choose from various output formats, including PNG, JPEG, and more. This ensures that the final images meet specific requirements for different platforms and applications.
+        </p>
+        
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+            Real-Time Preview
+        </h3>
+        <p class="text-lg text-gray-600 mb-4">
+            The Background Removal Tool provides a real-time preview of the edited image, allowing users to see the results before finalizing the changes. This feature helps in making necessary adjustments on the spot, ensuring satisfaction with the outcome.
+        </p>
+        
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+            Integration with Design Software
+        </h3>
+        <p class="text-lg text-gray-600 mb-4">
+            The tool can seamlessly integrate with popular design software such as Adobe Photoshop, Canva, and others. This integration allows users to enhance their images further and utilize them in various design projects.
+        </p>
+        
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+            Secure and Reliable
+        </h3>
+        <p class="text-lg text-gray-600 mb-4">
+            Security is a top priority for the Background Removal Tool. User data and images are securely processed and deleted after the session, ensuring privacy and confidentiality.
+        </p>
+        
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+            Cross-Platform Availability
+        </h3>
+        <p class="text-lg text-gray-600 mb-4">
+            Whether you’re using a Windows, macOS, or Linux device, the Background Removal Tool is accessible across various platforms. This versatility allows users to work seamlessly, regardless of their operating system.
+        </p>
+        
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">
+            Benefits of Using the Background Removal Tool
+        </h2>
+        
+        <ul class="list-disc list-inside text-lg text-gray-600 mb-6">
+            <li>
+                <strong>Time and Cost Efficiency:</strong> By automating the background removal process, users save valuable time and resources, making their workflows more efficient.
+            </li>
+            <li>
+                <strong>Enhanced Image Quality:</strong> The tool helps improve the quality of images by ensuring that backgrounds are removed cleanly, leading to better presentation and professional output.
+            </li>
+            <li>
+                <strong>User-Friendly Experience:</strong> The intuitive interface ensures that users of all skill levels can easily navigate the software, making it accessible for everyone.
+            </li>
+            <li>
+                <strong>Increased Productivity:</strong> Batch processing and real-time previews enable users to work more quickly, enhancing overall productivity in image editing tasks.
+            </li>
+            <li>
+                <strong>Versatile Applications:</strong> The Background Removal Tool caters to various industries, including e-commerce, photography, marketing, and more, making it a versatile solution for diverse needs.
+            </li>
+        </ul>
+        
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">
+            How the Background Removal Tool Works
+        </h2>
+        
+        <ul class="list-disc list-inside text-lg text-gray-600 mb-6">
+            <li>
+                <strong>Upload Your Image:</strong> Begin by uploading the image from which you want to remove the background. The tool accepts various file formats.
+            </li>
+            <li>
+                <strong>Automatic Background Detection:</strong> The AI technology automatically detects the subject and background in the image, preparing for removal.
+            </li>
+            <li>
+                <strong>Adjust and Customize:</strong> Use the editing features to make any necessary adjustments, such as refining edges or changing output formats.
+            </li>
+            <li>
+                <strong>Preview the Results:</strong> View the processed image in real-time to ensure the results meet your expectations before finalizing.
+            </li>
+            <li>
+                <strong>Download and Share:</strong> Once satisfied, download the edited image and share it across your desired platforms.
+            </li>
+        </ul>
+        
+    </div>
+
+    <section class="text-gray-700 body-font">
+      <div class="flex justify-center mt-10 text-4xl font-regular">Why Us?</div>
+      <div class="container px-5 py-12 mx-auto">
+        <div class="flex flex-wrap text-center justify-center">
+          <div class="p-4 md:w-1/4 sm:w-1/2">
+            <div
+              class="px-4 py-6 transform transition duration-500 hover:scale-110"
+            >
+              <div class="flex justify-center">
+                <img
+                  src="https://image3.jdomni.in/banner/13062021/58/97/7C/E53960D1295621EFCB5B13F335_1623567851299.png?output-format=webp"
+                  class="w-32 mb-3"
+                />
+              </div>
+              <h2 class="title-font font-regular text-2xl text-gray-900">
+                Latest Milling Machinery
+              </h2>
+            </div>
+          </div>
+
+          <div class="p-4 md:w-1/4 sm:w-1/2">
+            <div
+              class="px-4 py-6 transform transition duration-500 hover:scale-110"
+            >
+              <div class="flex justify-center">
+                <img
+                  src="https://image2.jdomni.in/banner/13062021/3E/57/E8/1D6E23DD7E12571705CAC761E7_1623567977295.png?output-format=webp"
+                  class="w-32 mb-3"
+                />
+              </div>
+              <h2 class="title-font font-regular text-2xl text-gray-900">
+                Reasonable Rates
+              </h2>
+            </div>
+          </div>
+
+          <div class="p-4 md:w-1/4 sm:w-1/2">
+            <div
+              class="px-4 py-6 transform transition duration-500 hover:scale-110"
+            >
+              <div class="flex justify-center">
+                <img
+                  src="https://image3.jdomni.in/banner/13062021/16/7E/7E/5A9920439E52EF309F27B43EEB_1623568010437.png?output-format=webp"
+                  class="w-32 mb-3"
+                />
+              </div>
+              <h2 class="title-font font-regular text-2xl text-gray-900">
+                Time Efficiency
+              </h2>
+            </div>
+          </div>
+
+          <div class="p-4 md:w-1/4 sm:w-1/2">
+            <div
+              class="px-4 py-6 transform transition duration-500 hover:scale-110"
+            >
+              <div class="flex justify-center">
+                <img
+                  src="https://image3.jdomni.in/banner/13062021/EB/99/EE/8B46027500E987A5142ECC1CE1_1623567959360.png?output-format=webp"
+                  class="w-32 mb-3"
+                />
+              </div>
+              <h2 class="title-font font-regular text-2xl text-gray-900">
+                Expertise in Industry
+              </h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="bg-white px-6 py-12 sm:py-24 lg:px-8" id="contact">
+      <div
+        class="mx-auto max-w-xl flex flex-col items-center justify-center text-center"
+      >
+        <h1
+          class="text-4xl md:text-5xl font-bold tracking-tight text-[#49a3af]"
+        >
+          Let's Talk
+        </h1>
+        <p class="mt-3 text-lg text-gray-600">
+          Feature request? Suggestion? or maybe you'd like to be our critic!
+          Here's a form just for that.
+        </p>
+      </div>
+      <form class="mx-auto mt-16 max-w-xl sm:mt-20 rounded shadow-lg p-5">
+        <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+          <div>
+            <label
+              for="first-name"
+              class="block text-sm font-semibold leading-6 text-gray-900"
+              >First name</label
+            >
+            <div class="mt-2.5">
+              <input
+                required=""
+                type="text"
+                name="first-name"
+                id="first-name"
+                autocomplete="given-name"
+                placeholder="Your First Name"
+                class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+          <div>
+            <label
+              for="last-name"
+              class="block text-sm font-semibold leading-6 text-gray-900"
+              >Last name</label
+            >
+            <div class="mt-2.5">
+              <input
+                required=""
+                type="text"
+                name="last-name"
+                id="last-name"
+                autocomplete="family-name"
+                placeholder="Your Last Name"
+                class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+          <div class="sm:col-span-2">
+            <label
+              for="company"
+              class="block text-sm font-semibold leading-6 text-gray-900"
+              >Company</label
+            >
+            <div class="mt-2.5">
+              <input
+                required=""
+                type="text"
+                name="company"
+                id="company"
+                autocomplete="organization"
+                placeholder="Your Company Name"
+                class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+          <div class="sm:col-span-2">
+            <label
+              for="email"
+              class="block text-sm font-semibold leading-6 text-gray-900"
+              >Email</label
+            >
+            <div class="mt-2.5">
+              <input
+                required=""
+                type="email"
+                name="email"
+                id="email"
+                autocomplete="email"
+                placeholder="Your Email Address"
+                class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+          <div class="sm:col-span-2">
+            <label
+              for="phone"
+              class="block text-sm font-semibold leading-6 text-gray-900"
+              >Phone number</label
+            >
+            <div class="mt-2.5">
+              <input
+                required=""
+                type="tel"
+                name="phone"
+                id="phone"
+                autocomplete="tel"
+                placeholder="Your Phone Number"
+                class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+          <div class="sm:col-span-2">
+            <label
+              for="message"
+              class="block text-sm font-semibold leading-6 text-gray-900"
+              >Message</label
+            >
+            <div class="mt-2.5">
+              <textarea
+                name="message"
+                id="message"
+                rows="4"
+                placeholder="Share your thoughts..."
+                class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="mt-10">
+          <button
+            type="submit"
+            class="bg-[#49a3af] text-white rounded-full py-2 w-full block"
+          >
+            Submit →
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="bg-[#23393c] w-full">
+      <div
+        class="max-w-screen-lg px-4 sm:px-6 text-gray-800 sm:grid md:grid-cols-4 sm:grid-cols-2 mx-auto"
+      >
+        <div class="p-5">
+          <h3 class="font-bold text-4xl text-white">VEx</h3>
+        </div>
+        <div class="p-5">
+          <div class="text-sm uppercase text-white font-bold">Resources</div>
+          <a class="my-3 block text-white" href="/#"
+            >Documentation <span class="text-white text-xs p-1"></span></a
+          ><a class="my-3 block text-white" href="/#"
+            >Tutorials <span class="text-white text-xs p-1"></span></a
+          ><a class="my-3 block text-white" href="/#"
+            >Support <span class="text-white text-xs p-1">New</span></a
+          >
+        </div>
+        <div class="p-5">
+          <div class="text-sm uppercase text-white font-bold">Support</div>
+          <a class="my-3 block text-white" href="/#"
+            >Help Center <span class="text-white text-xs p-1"></span></a
+          ><a class="my-3 block text-white" href="/#"
+            >Privacy Policy <span class="text-white text-xs p-1"></span></a
+          ><a class="my-3 block text-white" href="/#"
+            >Conditions <span class="text-white text-xs p-1"></span
+          ></a>
+        </div>
+        <div class="p-5">
+          <div class="text-sm uppercase text-white font-bold">Contact us</div>
+          <a class="my-3 block text-white" href="/#"
+            >XXX XXXX, Floor 1 yash Padma, Boisar west
+            <span class="text-white text-xs p-1"></span></a
+          ><a class="my-3 block text-white" href="/#"
+            >contact@company.com <span class="text-white text-xs p-1"></span
+          ></a>
+        </div>
+      </div>
+      <div class="pt-2">
+        <div
+          class="flex pb-5 px-3 m-auto pt-5 border-t text-gray-800 text-sm flex-col max-w-screen-lg items-center"
+        >
+          <div class="md:flex-auto md:flex-row-reverse mt-2 flex-row flex">
+            <a href="/#" class="w-6 mx-1">
+              <svg
+                class="fill-current cursor-pointer text-white hover:text-white"
+                width="100%"
+                height="100%"
+                viewBox="0 0 24 24"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xml:space="preserve"
+                xmlns:serif="http://www.serif.com/"
+                style="
+                  fill-rule: evenodd;
+                  clip-rule: evenodd;
+                  stroke-linejoin: round;
+                  stroke-miterlimit: 2;
+                "
+              >
+                <path
+                  id="Twitter"
+                  d="M24,12c0,6.627 -5.373,12 -12,12c-6.627,0 -12,-5.373 -12,-12c0,-6.627
+                          5.373,-12 12,-12c6.627,0 12,5.373 12,12Zm-6.465,-3.192c-0.379,0.168
+                          -0.786,0.281 -1.213,0.333c0.436,-0.262 0.771,-0.676
+                          0.929,-1.169c-0.408,0.242 -0.86,0.418 -1.341,0.513c-0.385,-0.411
+                          -0.934,-0.667 -1.541,-0.667c-1.167,0 -2.112,0.945 -2.112,2.111c0,0.166
+                          0.018,0.327 0.054,0.482c-1.754,-0.088 -3.31,-0.929
+                          -4.352,-2.206c-0.181,0.311 -0.286,0.674 -0.286,1.061c0,0.733 0.373,1.379
+                          0.94,1.757c-0.346,-0.01 -0.672,-0.106 -0.956,-0.264c-0.001,0.009
+                          -0.001,0.018 -0.001,0.027c0,1.023 0.728,1.877 1.694,2.07c-0.177,0.049
+                          -0.364,0.075 -0.556,0.075c-0.137,0 -0.269,-0.014 -0.397,-0.038c0.268,0.838
+                          1.048,1.449 1.972,1.466c-0.723,0.566 -1.633,0.904 -2.622,0.904c-0.171,0
+                          -0.339,-0.01 -0.504,-0.03c0.934,0.599 2.044,0.949 3.237,0.949c3.883,0
+                          6.007,-3.217 6.007,-6.008c0,-0.091 -0.002,-0.183 -0.006,-0.273c0.413,-0.298
+                          0.771,-0.67 1.054,-1.093Z"
+                ></path>
+              </svg>
+            </a>
+            <a href="/#" class="w-6 mx-1">
+              <svg
+                class="fill-current cursor-pointer text-white hover:text-white"
+                width="100%"
+                height="100%"
+                viewBox="0 0 24 24"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xml:space="preserve"
+                xmlns:serif="http://www.serif.com/"
+                style="
+                  fill-rule: evenodd;
+                  clip-rule: evenodd;
+                  stroke-linejoin: round;
+                  stroke-miterlimit: 2;
+                "
+              >
+                <path
+                  id="Facebook"
+                  d="M24,12c0,6.627 -5.373,12 -12,12c-6.627,0 -12,-5.373 -12,-12c0,-6.627
+                          5.373,-12 12,-12c6.627,0 12,5.373
+                          12,12Zm-11.278,0l1.294,0l0.172,-1.617l-1.466,0l0.002,-0.808c0,-0.422
+                          0.04,-0.648 0.646,-0.648l0.809,0l0,-1.616l-1.295,0c-1.555,0 -2.103,0.784
+                          -2.103,2.102l0,0.97l-0.969,0l0,1.617l0.969,0l0,4.689l1.941,0l0,-4.689Z"
+                ></path>
+              </svg>
+            </a>
+
+            <a href="/#" class="w-6 mx-1">
+              <svg
+                class="fill-current cursor-pointer text-white hover:text-white"
+                width="100%"
+                height="100%"
+                viewBox="0 0 24 24"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xml:space="preserve"
+                xmlns:serif="http://www.serif.com/"
+                style="
+                  fill-rule: evenodd;
+                  clip-rule: evenodd;
+                  stroke-linejoin: round;
+                  stroke-miterlimit: 2;
+                "
+              >
+                <path
+                  id="Shape"
+                  d="M7.3,0.9c1.5,-0.6 3.1,-0.9 4.7,-0.9c1.6,0 3.2,0.3 4.7,0.9c1.5,0.6 2.8,1.5
+                          3.8,2.6c1,1.1 1.9,2.3 2.6,3.8c0.7,1.5 0.9,3 0.9,4.7c0,1.7 -0.3,3.2
+                          -0.9,4.7c-0.6,1.5 -1.5,2.8 -2.6,3.8c-1.1,1 -2.3,1.9 -3.8,2.6c-1.5,0.7
+                          -3.1,0.9 -4.7,0.9c-1.6,0 -3.2,-0.3 -4.7,-0.9c-1.5,-0.6 -2.8,-1.5
+                          -3.8,-2.6c-1,-1.1 -1.9,-2.3 -2.6,-3.8c-0.7,-1.5 -0.9,-3.1 -0.9,-4.7c0,-1.6
+                          0.3,-3.2 0.9,-4.7c0.6,-1.5 1.5,-2.8 2.6,-3.8c1.1,-1 2.3,-1.9
+                          3.8,-2.6Zm-0.3,7.1c0.6,0 1.1,-0.2 1.5,-0.5c0.4,-0.3 0.5,-0.8 0.5,-1.3c0,-0.5
+                          -0.2,-0.9 -0.6,-1.2c-0.4,-0.3 -0.8,-0.5 -1.4,-0.5c-0.6,0 -1.1,0.2
+                          -1.4,0.5c-0.3,0.3 -0.6,0.7 -0.6,1.2c0,0.5 0.2,0.9 0.5,1.3c0.3,0.4 0.9,0.5
+                          1.5,0.5Zm1.5,10l0,-8.5l-3,0l0,8.5l3,0Zm11,0l0,-4.5c0,-1.4 -0.3,-2.5
+                          -0.9,-3.3c-0.6,-0.8 -1.5,-1.2 -2.6,-1.2c-0.6,0 -1.1,0.2 -1.5,0.5c-0.4,0.3
+                          -0.8,0.8 -0.9,1.3l-0.1,-1.3l-3,0l0.1,2l0,6.5l3,0l0,-4.5c0,-0.6 0.1,-1.1
+                          0.4,-1.5c0.3,-0.4 0.6,-0.5 1.1,-0.5c0.5,0 0.9,0.2 1.1,0.5c0.2,0.3 0.4,0.8
+                          0.4,1.5l0,4.5l2.9,0Z"
+                ></path>
+              </svg>
+            </a>
+            <a href="/#" class="w-6 mx-1">
+              <svg
+                class="fill-current cursor-pointer text-white hover:text-white"
+                width="100%"
+                height="100%"
+                viewBox="0 0 24 24"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xml:space="preserve"
+                xmlns:serif="http://www.serif.com/"
+                style="
+                  fill-rule: evenodd;
+                  clip-rule: evenodd;
+                  stroke-linejoin: round;
+                  stroke-miterlimit: 2;
+                "
+              >
+                <path
+                  id="Combined-Shape"
+                  d="M12,24c6.627,0 12,-5.373 12,-12c0,-6.627 -5.373,-12 -12,-12c-6.627,0
+                          -12,5.373 -12,12c0,6.627 5.373,12 12,12Zm6.591,-15.556l-0.722,0c-0.189,0
+                          -0.681,0.208 -0.681,0.385l0,6.422c0,0.178 0.492,0.323
+                          0.681,0.323l0.722,0l0,1.426l-4.675,0l0,-1.426l0.935,0l0,-6.655l-0.163,0l-2.251,8.081l-1.742,0l-2.222,-8.081l-0.168,0l0,6.655l0.935,0l0,1.426l-3.74,0l0,-1.426l0.519,0c0.203,0
+                          0.416,-0.145 0.416,-0.323l0,-6.422c0,-0.177 -0.213,-0.385
+                          -0.416,-0.385l-0.519,0l0,-1.426l4.847,0l1.583,5.704l0.042,0l1.598,-5.704l5.021,0l0,1.426Z"
+                ></path>
+              </svg>
+            </a>
+          </div>
+          <div class="my-5 text-white">
+            © Copyright 2020. All Rights Reserved.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+
+    <script>
+      const uploadInput = document.getElementById("upload");
+      const originalCanvas = document.getElementById("original-canvas");
+      const processedCanvas = document.getElementById("canvas");
+      const ctxOriginal = originalCanvas.getContext("2d");
+      const ctxProcessed = processedCanvas.getContext("2d");
+      const removeBgBtn = document.getElementById("remove-bg-btn");
+      const iconContainer = document.getElementById("icon-container");
+      const saveIcon = document.getElementById("save-icon");
+      const downloadIcon = document.getElementById("download-icon");
+      const clearIcon = document.getElementById("clear-icon");
+      const preloader = document.getElementById("preloader");
+
+      let img = new Image();
+      let apiKey = "Lh7NB1VthSASVQjewPLQiD7m"; // Updated API key
+
+      // Handle file input
+      uploadInput.addEventListener("change", handleFileUpload);
+
+      // Process image file
+      function handleFileUpload(e) {
+        const file = e.target.files[0];
+        if (file) {
+          displayImage(file);
+          showRemoveBgButton();
+        }
+      }
+
+      // Display original image
+      function displayImage(file) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          img.src = event.target.result;
+          img.onload = function () {
+            // Set canvas dimensions
+            originalCanvas.width = img.width;
+            originalCanvas.height = img.height;
+            processedCanvas.width = img.width;
+            processedCanvas.height = img.height;
+
+            // Draw original image
+            ctxOriginal.drawImage(img, 0, 0, img.width, img.height);
+
+            // Hide processed canvas initially
+            processedCanvas.style.display = "none";
+          };
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Show "Remove BG" button
+      function showRemoveBgButton() {
+        removeBgBtn.classList.remove("hidden");
+        removeBgBtn.addEventListener("click", removeBg);
+      }
+
+      // Remove background using remove.bg API
+      function removeBg() {
+        const formData = new FormData();
+        formData.append("image_file", uploadInput.files[0]);
+        formData.append("size", "auto");
+
+        // Show preloader
+        preloader.classList.remove("hidden");
+
+        fetch("https://api.remove.bg/v1.0/removebg", {
+          method: "POST",
+          headers: {
+            "X-Api-Key": apiKey,
+          },
+          body: formData,
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.text().then((text) => {
+                throw new Error(
+                  `API request failed with status ${response.status}: ${text}`
+                );
+              });
+            }
+            return response.blob();
+          })
+          .then((blob) => {
+            const imgURL = URL.createObjectURL(blob);
+            const processedImg = new Image();
+            processedImg.src = imgURL;
+            processedImg.onload = function () {
+              // Draw the processed image on the canvas
+              ctxProcessed.clearRect(
+                0,
+                0,
+                processedCanvas.width,
+                processedCanvas.height
+              );
+              ctxProcessed.drawImage(
+                processedImg,
+                0,
+                0,
+                processedCanvas.width,
+                processedCanvas.height
+              );
+
+              // Show the processed canvas
+              processedCanvas.style.display = "block";
+
+              // Display icons
+              iconContainer.classList.remove("hidden");
+              saveIcon.dataset.imgUrl = imgURL; // Store image URL for save
+              downloadIcon.dataset.imgUrl = imgURL; // Store image URL for download
+
+              // Hide preloader
+              preloader.classList.add("hidden");
+            };
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            preloader.classList.add("hidden"); // Hide preloader on error
+          });
+      }
+
+      // Download the processed image
+      downloadIcon.addEventListener("click", function () {
+        const imgURL = downloadIcon.dataset.imgUrl; // Retrieve stored image URL
+        const link = document.createElement("a");
+        link.href = imgURL;
+        link.download = "processed-image.png";
+        document.body.appendChild(link); // Append to body for Firefox support
+        link.click();
+        document.body.removeChild(link); // Remove from body
+      });
+
+      // Save the processed image
+      saveIcon.addEventListener("click", function () {
+        const imgURL = saveIcon.dataset.imgUrl; // Retrieve stored image URL
+        const link = document.createElement("a");
+        link.href = imgURL;
+        link.download = "saved-image.png";
+        document.body.appendChild(link); // Append to body for Firefox support
+        link.click();
+        document.body.removeChild(link); // Remove from body
+      });
+
+      // Clear the canvas and reset the page
+      clearIcon.addEventListener("click", function () {
+        ctxOriginal.clearRect(
+          0,
+          0,
+          originalCanvas.width,
+          originalCanvas.height
+        );
+        ctxProcessed.clearRect(
+          0,
+          0,
+          processedCanvas.width,
+          processedCanvas.height
+        );
+        iconContainer.classList.add("hidden");
+        removeBgBtn.classList.add("hidden");
+        processedCanvas.style.display = "none";
+        preloader.classList.add("hidden"); // Hide preloader
+      });
+    </script>
+
+    <!-- Include jsPDF library -->
+  </body>
+</html>
